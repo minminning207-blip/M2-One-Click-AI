@@ -1,0 +1,8 @@
+# ကိုယ့်စက်မှာ Whisper (faster-whisper) run လိုမှသာ - TRANSCRIBE_BACKEND=local (မူလ)
+# pip install -r requirements.txt -r requirements-local.txt
+faster-whisper>=1.0.0
+av>=12.0.0
+
+# ရွေးချယ်စရာ - Watermark/စာတန်းထိုး OCR (UI မှ မသုံးတော့)
+# opencv-python-headless>=4.8
+# easyocr>=1.7.1

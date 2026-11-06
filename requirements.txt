@@ -1,0 +1,29 @@
+# Python 3.10 - 3.12 အကြံပြုသည် (3.13 တွင် torch/ctranslate2 wheel ရှိမရှိ စစ်ပါ)
+fastapi>=0.110
+uvicorn[standard]>=0.27
+python-multipart>=0.0.9
+starlette>=0.40            # ဗီဒီယို seek (Range) အတွက်
+pydantic>=2.5
+numpy>=1.24
+
+# ၁) စကား -> စာသား: .env ၌ TRANSCRIBE_BACKEND=groq (သို့) openai ထားလျှင် API သုံးမည် (ဒီမှာ ဘာမှထပ်မလို)
+#    ကိုယ့်စက်မှာ Whisper run လိုလျှင် requirements-local.txt ကိုပါ သွင်းပါ
+
+# ၂) Gemini API (Recap Script, Gemini TTS, Voice Replication). Voice Clone အတွက် 2.25.0 နှင့်အထက် လိုသည်
+google-genai>=2.25.0
+
+# ၃) Text-to-Speech
+edge-tts>=7.0.0
+gTTS>=2.5.0
+
+# ၄) AI Subtitle & Watermark ဖယ်ရှားခြင်း - မသုံးတော့ပါ (UI မှ ဖယ်ထားသည်)။ ပြန်သုံးလိုမှ # ဖြုတ်ပါ
+# opencv-python-headless>=4.8
+# easyocr>=1.7.1
+
+# ၅) Font အမည် ဖတ်ရန် (/api/fonts)
+pillow>=10.0
+
+# ၆) Google Login (OAuth 2.0 / OpenID Connect)
+authlib>=1.3
+httpx>=0.27            # authlib starlette client အတွက်
+itsdangerous>=2.1      # SessionMiddleware (OAuth state သိမ်းရန်) အတွက်

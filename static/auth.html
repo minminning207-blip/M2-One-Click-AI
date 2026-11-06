@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login - AI Movie Recap Studio</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="auth-body">
+<div class="auth-wrap">
+  <h1>🎬 AI Movie Recap Studio</h1>
+  <p class="sub">ဝင်ရောက်ရန် (သို့) အကောင့်အသစ် ဖွင့်ပါ</p>
+
+  <section class="box">
+    <div class="seg" id="tabs">
+      <button type="button" data-tab="login" class="active">Login</button>
+      <button type="button" data-tab="register">အကောင့်ဖွင့်ရန်</button>
+    </div>
+    <div id="msg" style="margin-top:14px"></div>
+
+    <!-- Google (Login / Register panes only) -->
+    <div id="googleBox" class="hidden" style="margin-top:14px">
+      <a class="google-btn" href="/api/auth/google">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.4-4.8 7.1l7.6 5.9c4.4-4.1 7-10.1 7-17.5z"/>
+          <path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.3.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/>
+          <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </a>
+      <div class="or-sep"><span>or</span></div>
+    </div>
+
+    <!-- Login -->
+    <form id="form-login" class="pane" novalidate style="margin-top:14px">
+      <div class="formrow"><label class="lbl" for="lgEmail">Email</label><input type="email" id="lgEmail" autocomplete="email" required></div>
+      <div class="formrow"><label class="lbl" for="lgPw">Password</label><input type="password" id="lgPw" autocomplete="current-password" required></div>
+      <div class="captcha-box hidden" id="cap-login"></div>
+      <button class="go" type="submit" id="lgBtn" style="margin-top:4px">Login ဝင်မည်</button>
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;margin-top:8px">
+        <button type="button" class="linkbtn" data-goto="forgot">Password မေ့နေသလား?</button>
+        <button type="button" class="linkbtn hidden" id="resendBtn">အတည်ပြု email ပြန်ပို့ပါ</button>
+      </div>
+    </form>
+
+    <!-- Register -->
+    <form id="form-register" class="pane hidden" novalidate style="margin-top:14px">
+      <div class="formrow"><label class="lbl" for="rgName">အမည်</label><input type="text" id="rgName" maxlength="60" autocomplete="name"></div>
+      <div class="formrow"><label class="lbl" for="rgEmail">Email</label><input type="email" id="rgEmail" autocomplete="email" required></div>
+      <div class="formrow"><label class="lbl" for="rgPw">Password (အနည်းဆုံး ၈ လုံး)</label><input type="password" id="rgPw" autocomplete="new-password" required></div>
+      <div class="formrow"><label class="lbl" for="rgPw2">Password ထပ်ရိုက်ပါ</label><input type="password" id="rgPw2" autocomplete="new-password" required></div>
+      <div class="captcha-box" id="cap-register"></div>
+      <button class="go" type="submit" id="rgBtn" style="margin-top:4px">အကောင့်ဖွင့်မည်</button>
+      <div class="hint">အကောင့်ဖွင့်ပြီးလျှင် သင့် Email ထံ အတည်ပြု link ပို့ပါမည်။ link ကို နှိပ်မှ Login ဝင်နိုင်ပါမည်။</div>
+    </form>
+
+    <!-- Password မေ့ -->
+    <form id="form-forgot" class="pane hidden" novalidate style="margin-top:14px">
+      <p class="box-desc" style="margin-top:0">သင့် Email ကို ရိုက်ထည့်ပါ။ Password ပြန်သတ်မှတ်ရန် link ကို ပို့ပေးပါမည်။</p>
+      <div class="formrow"><label class="lbl" for="fgEmail">Email</label><input type="email" id="fgEmail" autocomplete="email" required></div>
+      <div class="captcha-box" id="cap-forgot"></div>
+      <button class="go" type="submit" id="fgBtn" style="margin-top:4px">Reset link ပို့ပါ</button>
+      <button type="button" class="linkbtn" data-goto="login">← Login သို့ ပြန်သွားရန်</button>
+    </form>
+
+    <!-- Password အသစ် -->
+    <form id="form-reset" class="pane hidden" novalidate style="margin-top:14px">
+      <p class="box-desc" style="margin-top:0">Password အသစ် သတ်မှတ်ပါ။</p>
+      <div class="formrow"><label class="lbl" for="rsPw">Password အသစ် (အနည်းဆုံး ၈ လုံး)</label><input type="password" id="rsPw" autocomplete="new-password" required></div>
+      <div class="formrow"><label class="lbl" for="rsPw2">ထပ်ရိုက်ပါ</label><input type="password" id="rsPw2" autocomplete="new-password" required></div>
+      <button class="go" type="submit" id="rsBtn">Password သိမ်းမည်</button>
+    </form>
+  </section>
+  <div id="devNote"></div>
+</div>
+<script src="/static/js/utils.js"></script>
+<script src="/static/js/auth.js"></script>
+</body>
+</html>

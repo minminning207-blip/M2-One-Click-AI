@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Movie Recap Studio</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="topbar">
+  <button type="button" class="icon-btn edit" id="menuBtn" aria-label="Menu">☰</button>
+  <span class="brand">🎬 Movie Recap Studio</span>
+</div>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="brand">🎬 Movie Recap Studio</div>
+  <nav class="nav" id="nav">
+    <button type="button" data-view="create" class="active">🎬 ဗီဒီယိုအသစ် ပြုလုပ်ရန်</button>
+    <button type="button" data-view="videos">📁 ကျွန်ုပ်၏ ဗီဒီယိုများ</button>
+    <button type="button" data-view="profile">👤 Profile</button>
+    <button type="button" data-view="settings">⚙ Settings</button>
+  </nav>
+  <div class="userbox">
+    <b id="sbName">...</b><span id="sbEmail"></span>
+    <button type="button" class="btn-sm logout" id="logoutBtn">🚪 Logout</button>
+  </div>
+</aside>
+<div class="backdrop" id="backdrop"></div>
+<main class="main">
+<div class="wrap">
+<div class="view" id="view-create">
+  <h1>🎬 AI Movie Recap Studio</h1>
+  <p class="sub">ရုပ်ရှင်ဗီဒီယိုကို အလိုအလျောက် Recap / Dubbing ပြုလုပ်ပေးသည့် ကိရိယာ</p>
+
+  <!-- ============================================================ 1) ဗီဒီယို ============================================================ -->
+  <section class="box">
+    <h2>ဗီဒီယို ရွေးရန်</h2>
+    <p class="box-desc">ပြုလုပ်လိုသော ရုပ်ရှင်ဗီဒီယိုဖိုင်ကို ရွေးပါ။</p>
+    <input type="file" id="video" accept="video/*">
+    <div class="hint" id="videoHint"></div>
+
+    <div class="sep"></div>
+    <label class="toggle">
+      <span class="t"><b>ကိုယ်တိုင်ရေးထားသော စာသားဖြင့် အသံထည့်မည် (Voiceover Script)</b><small>ပိတ်ထား = AI က ဇာတ်လမ်းကို အလိုအလျောက် ရေးပေးမည်</small></span>
+      <input type="checkbox" id="scriptOn"><span class="switch"></span>
+    </label>
+    <div class="note" id="scriptNote"></div>
+
+    <div class="sub-panel hidden" id="scriptPanel">
+      <label class="lbl">အသံထွက်ပေးစေလိုသော စာသား <span class="counter" id="counter">0 / 5000</span></label>
+      <textarea id="scriptText" maxlength="5000" placeholder="ဒီနေရာမှာ စာသားရိုက်ပါ။ ဒီစာသားက အသံနှင့် စာတန်းထိုး ဖြစ်လာပါမည်။"></textarea>
+      <div class="hint">ဒီနည်းလမ်းမှာ ဗီဒီယိုမရွေးလည်း ရပါသည် (အရောင်နောက်ခံဖြင့် ထုတ်ပေးမည်)။</div>
+    </div>
+
+    <div class="sub-panel" id="modePanel">
+      <label class="lbl">လုပ်ဆောင်ပုံ ရွေးပါ</label>
+      <div class="seg" id="modeSeg">
+        <button type="button" data-m="recap" class="active">Recap<br><small>ဇာတ်လမ်းကို ပြန်ပြောပြမည်</small></button>
+        <button type="button" data-m="dub">Dubbing<br><small>ပြောတာအတိုင်း ဘာသာပြန်မည်</small></button>
+        <button type="button" data-m="sub">Subtitle only<br><small>စာတန်းသာ ထည့်မည် (အသံမပြောင်း)</small></button>
+      </div>
+      <div class="hidden" id="subOpts" style="margin-top:12px">
+        <label class="lbl">စာတန်းထိုးမည့် ဘာသာစကား</label>
+        <select id="subLang">
+          <option value="Burmese" selected>မြန်မာ (Burmese)</option>
+          <option value="English">English</option>
+          <option value="Thai">ထိုင်း (Thai)</option>
+          <option value="Chinese (Simplified)">တရုတ် - ရိုးရှင်း (Chinese Simplified)</option>
+          <option value="Chinese (Traditional)">တရုတ် - ရိုးရာ (Chinese Traditional)</option>
+          <option value="Japanese">ဂျပန် (Japanese)</option>
+          <option value="Korean">ကိုရီးယား (Korean)</option>
+          <option value="Hindi">ဟိန္ဒီ (Hindi)</option>
+          <option value="Indonesian">အင်ဒိုနီးရှား (Indonesian)</option>
+          <option value="Vietnamese">ဗီယက်နမ် (Vietnamese)</option>
+          <option value="Malay">မလေး (Malay)</option>
+          <option value="Filipino">ဖိလစ်ပိုင် (Filipino)</option>
+          <option value="Spanish">စပိန် (Spanish)</option>
+          <option value="French">ပြင်သစ် (French)</option>
+          <option value="German">ဂျာမန် (German)</option>
+          <option value="Russian">ရုရှား (Russian)</option>
+          <option value="Portuguese">ပေါ်တူဂီ (Portuguese)</option>
+          <option value="Arabic">အာရပ် (Arabic)</option>
+          <option value="Turkish">တူရကီ (Turkish)</option>
+          <option value="__orig">ဘာသာမပြန်ဘဲ မူရင်းစကားအတိုင်း</option>
+        </select>
+        <div class="hint">မူရင်းအသံကို မပြောင်းဘဲ ဗီဒီယိုနဲ့ ကိုက်ညီအောင် စာတန်းတစ်ကြောင်းချင်း ထည့်ပေးမည်။ ဒီလုပ်ဆောင်ပုံမှာ အောက်က “အသံ (Voice)” အပိုင်းကို မသုံးပါ။</div>
+      </div>
+      <div class="hidden" id="dubOpts" style="margin-top:12px">
+        <label class="check"><input type="checkbox" id="dubKeep" checked><span>မူရင်းအသံကို တိုးတိုးလေး ချန်ထားမည်<small>ဇာတ်ကားထဲက တေးဂီတနှင့် အသံထူးများ အသံအသစ်အောက်မှာ ကျန်နေမည်။</small></span></label>
+        <label class="lbl">မူရင်းအသံ အတိုးအကျယ် <span id="dubVolVal">15</span>%</label>
+        <input type="range" id="dubVol" min="0" max="60" value="15">
+      </div>
+    </div>
+
+    <div class="sub-panel" id="recapPanel">
+      <label class="toggle">
+        <span class="t"><b>ဇာတ်ကားကို အတိုချုံ့မည် (Recap length)</b><small>ပိတ်ထား = ဗီဒီယိုတစ်ခုလုံး မူလအရှည်အတိုင်း (ဘာမှမဖြတ်ပါ) · ဖွင့်ထား = ရွေးထားသော အရှည်အထိ တိုအောင်လုပ်မည်</small></span>
+        <input type="checkbox" id="recapOn"><span class="switch"></span>
+      </label>
+      <div class="hidden" id="recapChoose" style="margin-top:12px">
+        <label class="lbl">Recap အရှည်</label>
+        <select id="recapLength">
+          <option value="short">တို (ဇာတ်ကား၏ ၁၅% ခန့်)</option>
+          <option value="medium" selected>အလယ်အလတ် (၃၀% ခန့်)</option>
+          <option value="long">ရှည် (၅၀% ခန့်)</option>
+          <option value="p75">၇၅% ခန့်</option>
+          <option value="full">၁၀၀% (ဇာတ်လမ်းအားလုံး)</option>
+        </select>
+      </div>
+      <div class="hint">အဆင့်များ - ① Whisper က စကားကို စာသားပြောင်း ② Gemini က Recap စာသားရေး ③ အသံထုတ် ④ ဗီဒီယိုနှင့် ပေါင်းစပ်။ ဇာတ်ကားရှည်ရင် CPU မှာ အချိန်ကြာပါမည်။</div>
+    </div>
+    <div class="warn hidden" id="whisperWarn">⚠ faster-whisper မသွင်းရသေးပါ။ <b>pip install -r requirements.txt</b> ကို run ပါ။</div>
+    <div class="warn hidden" id="geminiWarn">⚠ Gemini API key မထည့်ရသေးပါ။ <b>.env</b> ဖိုင်ထဲ <b>GEMINI_API_KEY</b> ထည့်ပြီး server ကို ပြန်စပါ။ မထည့်ရင် မူရင်းစကားအတိုင်းသာ ထွက်မည် (ဇာတ်လမ်းပြန်ရေးမပေးပါ)။</div>
+  </section>
+
+  <!-- ============================================================ 2) အသံ ============================================================ -->
+  <section class="box" id="voiceBox">
+    <h2>အသံ (Voice)</h2>
+    <p class="box-desc">ဗီဒီယိုမှာ ပြောပေးမည့် အသံကို ရွေးပါ။</p>
+
+    <label class="toggle">
+      <span class="t"><b>ကိုယ့်အသံကိုယ်သုံးမည် (Voice Clone)</b><small>သင့်အသံနမူနာကို AI က အတုယူပြီး ပြောပေးမည်</small></span>
+      <input type="checkbox" id="voiceClone"><span class="switch"></span>
+    </label>
+    <div class="sub-panel hidden" id="clonePanel">
+      <div class="row two">
+        <div><label class="lbl">၁) အသံနမူနာ (၁၀ - ၃၀ စက္ကန့်)</label><input type="file" id="refAudio" accept=".wav,.mp3,.mp4,.m4a,.ogg,audio/*,video/mp4"></div>
+        <div><label class="lbl">၂) ခွင့်ပြုချက် အသံသွင်းမှု</label><input type="file" id="consentAudio" accept=".wav,.mp3,.mp4,.m4a,.ogg,audio/*,video/mp4"></div>
+      </div>
+      <label class="lbl" style="margin-top:12px">ခွင့်ပြုချက်ဘာသာစကား - အောက်ပါစာကြောင်းကို ကိုယ့်အသံဖြင့် ဖတ်၍ အသံသွင်းပါ</label>
+      <select id="consentLang"></select>
+      <div class="consent" id="consentText"></div>
+      <div class="hint">အသံပိုင်ရှင်ကိုယ်တိုင်က အပေါ်ကစာကို အတိအကျ ဖတ်ပြီး နမူနာနှင့် မိုက်ခရိုဖုန်းတစ်ခုတည်းဖြင့် အသံသွင်းရပါမည် (Google ၏ စည်းမျဉ်း)။ ကိုယ့်အသံ သို့မဟုတ် ခွင့်ပြုချက်ရထားသော အသံကိုသာ သုံးပါ။ Voice Clone ဖွင့်ထားစဉ် အောက်က Model နှင့် Voice ကို မသုံးပါ။</div>
+      <div class="warn hidden" id="cloneWarn">⚠ Voice Clone အတွက် GEMINI_API_KEY လိုအပ်ပါသည်။</div>
+    </div>
+
+    <div class="sep"></div>
+    <div class="row two">
+      <div>
+        <label class="lbl">အသံထုတ်စနစ် (Model)</label>
+        <select id="engine">
+          <option value="edge">Edge-TTS (အခမဲ့ - အသံအမည်များစွာ)</option>
+          <option value="google">Google Translate TTS (အခမဲ့)</option>
+          <option value="gemini">Gemini TTS (Google AI Studio)</option>
+          <option value="cloud">Google Cloud TTS (Chirp 3 HD)</option>
+        </select>
+      </div>
+      <div>
+        <label class="lbl" id="langLabel">ဘာသာစကား</label>
+        <select id="ttsLang"></select>
+      </div>
+    </div>
+    <div class="hint" id="engineHint"></div>
+
+    <div id="genderRow" style="margin-top:14px">
+      <label class="lbl">ကျား / မ</label>
+      <div class="seg" id="genderSeg">
+        <button type="button" data-g="All" class="active">အားလုံး</button>
+        <button type="button" data-g="Male">ကျား</button>
+        <button type="button" data-g="Female">မ</button>
+      </div>
+    </div>
+
+    <label class="lbl" style="margin-top:14px">အသံ <span class="muted" id="voiceSource"></span></label>
+    <div class="voice-line">
+      <select id="voiceSel"></select>
+      <button type="button" class="icon-btn edit" id="voiceRename" title="အမည်ပေးရန်">✎</button>
+      <button type="button" class="icon-btn" id="voicePlay" title="နမူနာနားထောင်ရန်">▶</button>
+    </div>
+    <div class="hint">▶ နှိပ်ပြီး အသံနမူနာ နားထောင်ပါ။ ✎ နှိပ်ပြီး အသံကို ကိုယ်ပိုင်အမည်ပေးနိုင်ပါသည် (ဒီ browser ထဲမှာသာ သိမ်းမည်)။</div>
+
+    <label class="lbl" style="margin-top:14px">အမြန်နှုန်း</label>
+    <div class="chips" id="speedChips">
+      <button type="button" data-v="0.5">0.5x</button>
+      <button type="button" data-v="1" class="active">1x</button>
+      <button type="button" data-v="1.25">1.25x</button>
+      <button type="button" data-v="1.5">1.5x</button>
+      <button type="button" data-v="2">2x</button>
+      <button type="button" data-v="3">3x</button>
+      <input type="number" id="speedCustom" min="0.5" max="4" step="0.05" placeholder="စိတ်ကြိုက်">
+    </div>
+  </section>
+
+  <!-- ============================================================ 3) စာတန်းထိုး ============================================================ -->
+  <section class="box">
+    <div class="box-head">
+      <h2>စာတန်းထိုး (Subtitles)</h2>
+      <label class="sw"><input type="checkbox" id="subEnabled" checked><span class="switch"></span></label>
+    </div>
+    <p class="box-desc">ဗီဒီယိုပေါ်မှာ စာတန်းကို တိုက်ရိုက်ထည့်ပေးမည်။ နေရာကို အောက်က Preview ထဲမှာ ဆွဲရွှေ့နိုင်ပါသည်။</p>
+
+    <div id="subPanel">
+      <label class="lbl">ပုံစံအသင့် (Preset)</label>
+      <select id="subPreset">
+        <option value="classic">Classic - အဖြူ၊ အနက်အနား၊ အောက်ခြေ</option>
+        <option value="yellow">Bold Yellow - အဝါ၊ အနက်အနား၊ အောက်ခြေ</option>
+        <option value="boxed">Boxed - အဖြူ၊ ဖောက်ထွင်းမြင်ရသော နောက်ခံအကွက်</option>
+        <option value="neon">Neon - အစိမ်းလင်း၊ အလယ်</option>
+        <option value="minimal">Minimal - အဖြူ၊ အရိပ်နုနု</option>
+      </select>
+
+      <div class="row two" style="margin-top:14px">
+        <div>
+          <label class="lbl">စာလုံးအရောင်</label>
+          <div class="field-line">
+            <input type="color" id="subColor" value="#ffffff" aria-label="စာလုံးအရောင်">
+            <select id="subColorName">
+              <option value="#FFFFFF">အဖြူ</option><option value="#FFE600">အဝါ</option><option value="#00F0FF">အပြာနု</option>
+              <option value="#39FF14">အစိမ်းလင်း</option><option value="#FF9800">လိမ္မော်</option><option value="#FF4D9D">ပန်းရောင်</option>
+              <option value="#FF3B3B">အနီ</option><option value="#000000">အနက်</option><option value="custom">စိတ်ကြိုက်</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="lbl">စာလုံးပုံစံ (Font)</label>
+          <select id="subFont">
+            <option value="Liberation Sans">Liberation Sans (မူလ)</option>
+            <option value="Noto Sans Myanmar">Noto Sans Myanmar</option>
+            <option value="Padauk">Padauk (မြန်မာ)</option>
+            <option value="Myanmar Text">Myanmar Text (Windows)</option>
+            <option value="Arial">Arial</option>
+            <option value="DejaVu Sans">DejaVu Sans</option>
+            <option value="__custom">တခြား font အမည်ရိုက်ထည့်မည်...</option>
+          </select>
+          <input type="text" id="subFontCustom" class="hidden" placeholder="Font အမည် အတိအကျ" style="margin-top:8px">
+        </div>
+        <div>
+          <label class="lbl">စာလုံးအရွယ်အစား</label>
+          <select id="subSize"><option value="40">သေး</option><option value="56" selected>အလယ်အလတ်</option><option value="72">ကြီး</option><option value="90">အလွန်ကြီး</option></select>
+        </div>
+        <div>
+          <label class="lbl">စာလုံးအနား / နောက်ခံ</label>
+          <select id="subOutline">
+            <option value="black-outline">အနက်ရောင်အနား</option><option value="white-outline">အဖြူရောင်အနား</option>
+            <option value="black-box">အနက်ရောင်အကွက်</option><option value="semi-box">ဖောက်ထွင်းမြင်ရသော အကွက်</option>
+            <option value="shadow">အရိပ်</option><option value="none">မထည့်ပါ</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <label class="lbl">နေရာ</label>
+        <select id="subPos"><option value="bottom">အောက်</option><option value="middle">အလယ်</option><option value="top">အပေါ်</option><option value="custom" disabled>စိတ်ကြိုက် (ဆွဲထားသည်)</option></select>
+      </div>
+      <div class="hint">မြန်မာစာတန်းအတွက် FFmpeg run နေသောကွန်ပျူတာမှာ မြန်မာ font လိုပါသည်။ “Noto Sans Myanmar” သို့မဟုတ် “Padauk” သွင်းပါ၊ ဒါမှမဟုတ် .ttf ဖိုင်ကို main.py ဘေးက <b>fonts/</b> folder ထဲ ထည့်ပြီး ဒီမှာ ရွေးပါ။</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 4) Auto Edit ============================================================ -->
+  <section class="box">
+    <div class="box-head">
+      <h2>Auto Edit</h2>
+      <label class="sw"><input type="checkbox" id="autoEdit"><span class="switch"></span></label>
+    </div>
+    <p class="box-desc">ဗီဒီယိုဖိုင် ရွေးထားမှသာ အသုံးဝင်ပါသည်။ မူရင်းဗီဒီယိုကို အနည်းငယ်ပြင်ဆင်ပေးသည်။</p>
+    <div class="sub-panel hidden" id="editPanel" style="margin-top:0;padding-top:0;border-top:0">
+      <label class="lbl">ခဏရပ် + အနည်းငယ်မြန်ခြင်း (Rhythm)</label>
+      <select id="rhythm">
+        <option value="off">မသုံးပါ</option>
+        <option value="light">အနည်းငယ် - ၆ စက္ကန့်တစ်ခါ ၀.၁၅ စက္ကန့် ရပ်</option>
+        <option value="medium">အလယ်အလတ် - ၄ စက္ကန့်တစ်ခါ ၀.၂၅ စက္ကန့် ရပ်</option>
+        <option value="strong">ပြင်း - ၃ စက္ကန့်တစ်ခါ ၀.၃ စက္ကန့် ရပ်</option>
+      </select>
+      <div class="hint">ဗီဒီယိုကို အခါအားလျော်စွာ ခဏရပ်ပြီး ကျန်အပိုင်းကို အနည်းငယ်မြန်စေသည်။ စုစုပေါင်းအချိန် မပြောင်းသဖြင့် အသံနှင့် မလွဲပါ။</div>
+      <div class="sep"></div>
+      <label class="check"><input type="checkbox" id="flipSpeed" checked><span>ဘယ်ညာလှန်မည် + အမြန်နှုန်း 1.03x<small>ဗီဒီယိုကို မူရင်းနှင့် မတူအောင် အနည်းငယ်ပြောင်းပေးသည်။</small></span></label>
+      <label class="check"><input type="checkbox" id="zoom" checked><span>အနည်းငယ် Zoom ဆွဲမည် (၆%)</span></label>
+    </div>
+  </section>
+
+  <!-- ============================================================ 5) Logo ============================================================ -->
+  <section class="box">
+    <h2>Logo</h2>
+    <p class="box-desc">ဗီဒီယိုပေါ်မှာ ပုံ logo နှင့် စာသား logo ကို ထည့်နိုင်ပါသည်။ နေရာကို Preview ထဲမှာ ဆွဲရွှေ့နိုင်ပါသည်။</p>
+
+    <label class="toggle">
+      <span class="t"><b>ပုံ Logo ထည့်မည်</b><small>PNG (နောက်ခံဖောက်ထွင်း) ကို အကြံပြုသည်</small></span>
+      <input type="checkbox" id="addLogo"><span class="switch"></span>
+    </label>
+    <div class="sub-panel hidden" id="logoPanel">
+      <div class="row two">
+        <div><label class="lbl">Logo ပုံဖိုင်</label><input type="file" id="logoFile" accept="image/*"></div>
+        <div>
+          <label class="lbl">နေရာ</label>
+          <select id="logoPos"><option value="top-right">ညာဘက်အပေါ်</option><option value="top-left">ဘယ်ဘက်အပေါ်</option><option value="bottom-right">ညာဘက်အောက်</option><option value="bottom-left">ဘယ်ဘက်အောက်</option><option value="custom" disabled>စိတ်ကြိုက် (ဆွဲထားသည်)</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+    <label class="toggle">
+      <span class="t"><b>စာသား Logo ထည့်မည်</b><small>Channel အမည် / @handle ကို ဗီဒီယိုပေါ်တွင် ရေးထည့်သည်</small></span>
+      <input type="checkbox" id="textLogoOn"><span class="switch"></span>
+    </label>
+    <div class="sub-panel hidden" id="textLogoPanel">
+      <div class="row two">
+        <div><label class="lbl">စာသား</label><input type="text" id="tlText" maxlength="60" placeholder="@MyChannel"></div>
+        <div><label class="lbl">စာလုံးပုံစံ (Font)</label><select id="logoFont"></select></div>
+        <div><label class="lbl">အရွယ်အစား</label>
+          <select id="tlSize"><option value="32">သေး</option><option value="48" selected>အလယ်အလတ်</option><option value="72">ကြီး</option><option value="100">အလွန်ကြီး</option></select></div>
+        <div><label class="lbl">နေရာ</label>
+          <select id="tlPos"><option value="top-left">ဘယ်ဘက်အပေါ်</option><option value="top-center">အလယ်အပေါ်</option><option value="top-right">ညာဘက်အပေါ်</option><option value="bottom-left">ဘယ်ဘက်အောက်</option><option value="bottom-center">အလယ်အောက်</option><option value="bottom-right">ညာဘက်အောက်</option><option value="custom" disabled>စိတ်ကြိုက် (ဆွဲထားသည်)</option></select></div>
+        <div><label class="lbl">အရောင်</label>
+          <div class="field-line"><input type="color" id="tlColor" value="#ffffff" aria-label="စာသား logo အရောင်">
+            <select id="tlColorName"><option value="#FFFFFF">အဖြူ</option><option value="#FFE600">အဝါ</option><option value="#00F0FF">အပြာနု</option><option value="#39FF14">အစိမ်းလင်း</option><option value="#FF4D9D">ပန်းရောင်</option><option value="#FF3B3B">အနီ</option><option value="#000000">အနက်</option><option value="custom">စိတ်ကြိုက်</option></select></div></div>
+        <div><label class="lbl">ကြည်လင်မှု <span id="tlOpacityVal">100</span>%</label><input type="range" id="tlOpacity" min="10" max="100" value="100"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 6) Cover ============================================================ -->
+  <section class="box">
+    <h2>Cover / Poster</h2>
+    <p class="box-desc">ဗီဒီယိုထဲက အကြည်ဆုံး frame ကို Poster ပုံအဖြစ် ရွေးပြီး ခေါင်းစဉ်စာတန်း ရေးပေးသည်။ ဒီ Poster ပုံကိုပဲ ဗီဒီယိုအစမှာ Cover အဖြစ် အလိုအလျောက် ထည့်ပေးနိုင်သည်။ ပုံစံ၊ ခေါင်းစဉ်၊ စာလုံးကို အောက်မှာ တစ်ခါတည်း သတ်မှတ်ပါ။</p>
+    <label class="toggle">
+      <span class="t"><b>Poster ပုံကို ဗီဒီယိုအစမှာ Cover အဖြစ် ထည့်မည်</b><small>ဗီဒီယိုမစခင် Poster (ခေါင်းစဉ်စာတန်းပါ) ကို ပြမည်။ (MP3 ထဲမှာ မပါပါ၊ MP4 နှင့် SRT မှာသာ ပါမည်)</small></span>
+      <input type="checkbox" id="coverOn"><span class="switch"></span>
+    </label>
+    <div class="sep"></div>
+    <label class="toggle">
+      <span class="t"><b>Poster ပုံ (jpg) ကို ဒေါင်းလုဒ်အဖြစ် ထုတ်ပေးမည်</b><small>Facebook / YouTube thumbnail အတွက် သုံးနိုင်သည်။</small></span>
+      <input type="checkbox" id="posterOn"><span class="switch"></span>
+    </label>
+    <div class="sub-panel hidden" id="coverPanel">
+      <div class="row two">
+        <div><label class="lbl">ပုံစံ (Template)</label>
+          <select id="coverTpl"><option value="yellowbox">အဝါရောင်အကွက်</option><option value="redbox">အနီရောင်အကွက်</option><option value="cinema">ရုပ်ရှင်ပုံစံ</option><option value="neon">Neon</option></select></div>
+        <div><label class="lbl">ကြာချိန်</label>
+          <select id="coverSec"><option value="1.5">၁.၅ စက္ကန့်</option><option value="2.5" selected>၂.၅ စက္ကန့်</option><option value="3.5">၃.၅ စက္ကန့်</option><option value="5">၅ စက္ကန့်</option></select></div>
+        <div><label class="lbl">စာလုံးပုံစံ (Font)</label><select id="coverFont"></select></div>
+        <div><label class="lbl">ခေါင်းစဉ်အရွယ်အစား</label>
+          <select id="coverSize"><option value="70">သေး</option><option value="90" selected>အလယ်အလတ်</option><option value="120">ကြီး</option></select></div>
+      </div>
+      <label class="lbl" style="margin-top:12px">ခေါင်းစဉ်</label>
+      <input type="text" id="coverTitle" maxlength="120" placeholder="ဗလာထားလျှင် Gemini က ဆွဲဆောင်မှုရှိသော ခေါင်းစဉ် ရေးပေးမည်">
+      <label class="check"><input type="checkbox" id="coverAuto" checked><span>ခေါင်းစဉ်ဗလာဖြစ်လျှင် Gemini ကရေးပေးမည်</span></label>
+      <label class="lbl">စာတန်းငယ် (အပေါ်ဘက်မှာပြမည်၊ မထည့်လည်းရ)</label>
+      <input type="text" id="coverTag" maxlength="80" placeholder="FULL MOVIE RECAP">
+    </div>
+  </section>
+
+  <!-- ============================================================ 7) Visualizer + Preview ============================================================ -->
+  <section class="box">
+    <h2>Video Live Shape Visualizer</h2>
+    <p class="box-desc">ဗီဒီယိုအရွယ်အစား ရွေးပါ၊ အသံနှင့်အတူ လှုပ်ရှားမည့် ပုံသဏ္ဍာန်ကို သတ်မှတ်ပါ၊ ပြီးလျှင် အောက်က Preview မှာ ကြည့်ပါ။</p>
+
+    <label class="lbl">ဗီဒီယို အရွယ်အစား</label>
+    <input type="hidden" id="vizAspect" value="9:16">
+    <div class="sizes" id="sizeBoxes">
+      <button type="button" class="size active" data-v="9:16"><span class="ico-wrap"><i class="ico r916"></i></span><b>9:16</b><small>TikTok · Shorts · Facebook Reels</small></button>
+      <button type="button" class="size" data-v="16:9"><span class="ico-wrap"><i class="ico r169"></i></span><b>16:9</b><small>YouTube</small></button>
+      <button type="button" class="size" data-v="1:1"><span class="ico-wrap"><i class="ico r11"></i></span><b>1:1</b><small>Square (လေးထောင့်)</small></button>
+    </div>
+
+    <div class="sep"></div>
+    <label class="toggle" style="margin-bottom:14px">
+      <span class="t"><b>အသံနှင့်လိုက်လှုပ်သော ပုံသဏ္ဍာန် ပြမည်</b><small>အသံထွက်သလို လှုပ်ရှားပြီး ဗီဒီယိုပေါ်မှာ ပြသည်</small></span>
+      <input type="checkbox" id="vizOn" checked><span class="switch"></span>
+    </label>
+    <div id="vizControls">
+      <div class="row three">
+        <div>
+          <label class="lbl">ပုံသဏ္ဍာန်</label>
+          <select id="vizStyle">
+            <option value="none" selected>မထည့်ပါ</option>
+            <option value="scope">Vector Shape</option>
+            <option value="scope_polar">Polar Vector</option>
+            <option value="ring">Pulse Ring</option>
+            <option value="wave">Wave (ဖြည့်)</option>
+            <option value="wave_line">Wave (မျဉ်း)</option>
+            <option value="bars">Frequency Bars</option>
+            <option value="spectrum_line">Spectrum Line</option>
+            <option value="dots">အစက်များ</option>
+            <option value="volume">Volume Meter</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl">ပုံသဏ္ဍာန် အရောင်</label>
+          <div class="field-line">
+            <input type="color" id="vizColor" value="#00d4ff" aria-label="ပုံသဏ္ဍာန်အရောင်">
+            <select id="vizColorName">
+              <option value="#00D4FF">အပြာနု</option><option value="#FFFFFF">အဖြူ</option><option value="#FFE600">အဝါ</option>
+              <option value="#39FF14">အစိမ်းလင်း</option><option value="#FF4D9D">ပန်းရောင်</option><option value="#FF9800">လိမ္မော်</option>
+              <option value="#FF3B3B">အနီ</option><option value="#B388FF">ခရမ်း</option><option value="custom">စိတ်ကြိုက်</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="lbl">နောက်ခံ</label>
+          <select id="vizBg">
+            <option value="none">မထည့်ပါ (ဖောက်ထွင်း)</option><option value="dark">အမှောင်အကွက်</option><option value="light">အလင်းအကွက်</option>
+            <option value="purple">ခရမ်း gradient</option><option value="blue">အပြာ gradient</option><option value="sunset">နေဝင်ချိန် gradient</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <label class="lbl">ပုံသဏ္ဍာန်၏ နေရာ</label>
+        <select id="vizPos"><option value="top">အပေါ်</option><option value="middle" selected>အလယ်</option><option value="bottom">အောက်</option></select>
+      </div>
+      <div class="hint">ဗီဒီယိုပါလျှင် နောက်ခံက ပုံသဏ္ဍာန်နောက်က အကွက်ဖြစ်သည်။ ဗီဒီယိုမပါလျှင် (စာသားသက်သက်) ဗီဒီယိုတစ်ခုလုံး၏ နောက်ခံဖြစ်လာမည်။</div>
+    </div>
+
+    <h3 class="sec">Preview (ခန့်မှန်းပုံ)</h3>
+    <div class="hint" style="margin-top:0">💡 စာတန်း၊ Logo နှင့် စာသား Logo ကို <b>ဆွဲ၍ (drag)</b> နေရာစိတ်ကြိုက် ရွှေ့နိုင်ပါသည်။ ဗီဒီယိုရွေးထားလျှင် ▶ နှိပ်၍ ကြည့်နိုင်ပါသည်။</div>
+    <div class="pv-wrap">
+      <div class="pv-box" id="pvBox">
+        <canvas id="pv"></canvas>
+        <div class="player">
+          <button type="button" class="icon-btn" id="pvPlay" title="ဖွင့်ရန် / ရပ်ရန်" disabled>▶</button>
+          <input type="range" id="pvSeek" min="0" max="1000" value="0" disabled aria-label="ဗီဒီယို အချိန်ရွေးရန်">
+          <span class="time" id="pvTime">0:00 / 0:00</span>
+          <button type="button" class="icon-btn edit" id="pvMute" title="အသံ ဖွင့်/ပိတ်" disabled>🔇</button>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sec">အရောင်နှင့် အလင်းအမှောင် (Color &amp; Light)</h3>
+    <label class="toggle">
+      <span class="t"><b>စိတ်ကြိုက် အရောင် / အလင်းအမှောင် ညှိမည်</b><small>ဗီဒီယိုကိုသာ ပြောင်းသည် (စာတန်းနှင့် ပုံသဏ္ဍာန်ကို မထိပါ)</small></span>
+      <input type="checkbox" id="gradeOn"><span class="switch"></span>
+    </label>
+    <div class="sub-panel hidden" id="gradePanel">
+      <div class="row two">
+        <div><label class="lbl">အရောင်ခြုံမည့်အရောင် (Tint)</label>
+          <div class="field-line"><input type="color" id="gradeTint" value="#ff8800" aria-label="Tint အရောင်">
+            <select id="gradeTintName"><option value="#FF8800">နွေးသော လိမ္မော်</option><option value="#0077FF">အေးသော အပြာ</option><option value="#00C853">အစိမ်း</option><option value="#B388FF">ခရမ်း</option><option value="#FF3B3B">အနီ</option><option value="#000000">အနက်</option><option value="custom">စိတ်ကြိုက်</option></select></div></div>
+        <div><label class="lbl">အရောင်ခြုံမှု အားပြင်း <span id="gradeTintOpVal">0</span>%</label><input type="range" id="gradeTintOp" min="0" max="60" value="0"></div>
+        <div><label class="lbl">အလင်း (Brightness) <span id="gradeBrVal">0</span></label><input type="range" id="gradeBr" min="-50" max="50" value="0"></div>
+        <div><label class="lbl">အလင်းအမှောင်ကွာခြားမှု (Contrast) <span id="gradeCtVal">100</span>%</label><input type="range" id="gradeCt" min="50" max="150" value="100"></div>
+        <div><label class="lbl">အရောင်စွင်ပါမှု (Saturation) <span id="gradeSaVal">100</span>%</label><input type="range" id="gradeSa" min="0" max="200" value="100"></div>
+        <div><label class="lbl">ထောင့်လေးထောင့် မှောင်ညို့ခြင်း (Vignette) <span id="gradeVgVal">0</span>%</label><input type="range" id="gradeVg" min="0" max="100" value="0"></div>
+      </div>
+    </div>
+
+    <h3 class="sec">မူရင်းစာတန်း / Watermark မှုန်ဝါးခြင်း (Blur)</h3>
+    <label class="toggle">
+      <span class="t"><b>မှုန်ဝါးအကွက် ထည့်မည်</b><small>ဗီဒီယိုထဲက မူရင်းစာတန်း၊ ရေစာကို အကွက်တစ်ခုဖြင့် ဖုံးမည်</small></span>
+      <input type="checkbox" id="blurOn"><span class="switch"></span>
+    </label>
+    <div class="sub-panel hidden" id="blurPanel">
+      <div class="hint" style="margin-top:0">💡 အပေါ်က Preview ထဲက လိမ္မော်ရောင်အကွက်ကို <b>ဆွဲ၍ (drag)</b> နေရာရွှေ့ပါ။ ညာဘက်အောက်ထောင့်က လေးထောင့်ကလေးကို ဆွဲ၍ အရွယ်ပြောင်းပါ။ ဗီဒီယိုရွေးထားမှ မှုန်ဝါးသည်ကို မြင်ရမည်။</div>
+      <label class="lbl" style="margin-top:12px">မှုန်ဝါးအား <span id="blurStrengthVal">60</span>%</label>
+      <input type="range" id="blurStrength" min="1" max="100" value="60">
+      <div style="margin-top:10px"><button type="button" class="btn-sm" id="blurReset">↺ အကွက်ကို မူလနေရာ (အောက်ခြေစာတန်းနေရာ) ပြန်ထား</button></div>
+    </div>
+
+    <h3 class="sec">အောက်ခြေ အရိပ် (Bottom Shade)</h3>
+    <label class="toggle">
+      <span class="t"><b>ဗီဒီယိုအောက်ခြေကို အရိပ်ထည့်မည်</b><small>စာတန်းကို ပိုဖတ်ရလွယ်စေသည် (ဗီဒီယိုလိုသည်)</small></span>
+      <input type="checkbox" id="shadeOn"><span class="switch"></span>
+    </label>
+    <div class="sub-panel hidden" id="shadePanel">
+      <div class="row two">
+        <div>
+          <label class="lbl">အရိပ်အရောင်</label>
+          <div class="field-line">
+            <input type="color" id="shadeColor" value="#000000" aria-label="အရိပ်အရောင်">
+            <select id="shadeColorName">
+              <option value="#000000">အနက်</option><option value="#101040">အပြာရင့်</option><option value="#2a1208">အညိုရင့်</option>
+              <option value="#240a3c">ခရမ်းရင့်</option><option value="#0a2a1a">အစိမ်းရင့်</option><option value="#3a0a14">အနီရင့်</option>
+              <option value="custom">စိတ်ကြိုက်</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="lbl">မှောင်မှု အဆင့်</label>
+          <div class="seg" id="shadeModeSeg">
+            <button type="button" data-m="auto" class="active">အလိုအလျောက်</button>
+            <button type="button" data-m="custom">စိတ်ကြိုက်</button>
+          </div>
+        </div>
+      </div>
+      <div class="hidden" id="shadeSliderBox" style="margin-top:12px">
+        <label class="lbl">မှောင်မှု <span id="shadeVal">50</span>%</label>
+        <input type="range" id="shadeOpacity" min="0" max="100" value="50">
+      </div>
+      <div class="hint">“အလိုအလျောက်” ကို ရွေးလျှင် ဗီဒီယိုအောက်ပိုင်း ဘယ်လောက်လင်းသလဲ တိုင်းပြီး အရိပ်ပမာဏကို ရွေးပေးသည်။</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ Background Music ============================================================ -->
+  <section class="box hidden" id="musicBox">
+    <h2>Background Music</h2>
+    <p class="box-desc">Free, royalty-free tracks from Openverse (CC0 / Public Domain / CC BY). No account needed.</p>
+    <label class="toggle">
+      <span class="t"><b>Add background music</b><small>Search a track, preview it, then it is mixed softly under the narration.</small></span>
+      <input type="checkbox" id="musicOn"><span class="switch"></span>
+    </label>
+    <div class="sub-panel hidden" id="musicPanel">
+      <div class="field-line">
+        <input type="text" id="musicQ" placeholder="e.g. cinematic, suspense, calm piano" maxlength="80">
+        <button type="button" class="btn-sm" id="musicSearch">Search</button>
+      </div>
+      <div id="musicMsg"></div>
+      <div id="musicList"></div>
+      <div class="hidden" id="musicMoreBox"><button type="button" class="btn-sm" id="musicMore">Load more</button></div>
+      <div class="note hidden" id="musicPicked"></div>
+      <label class="lbl">Music volume <span id="musicVolVal">20</span>%</label>
+      <input type="range" id="musicVol" min="0" max="60" value="20">
+      <label class="check"><input type="checkbox" id="musicDuck" checked><span>Lower the music while the narrator speaks<small>Automatic ducking, so the voice always stays clear.</small></span></label>
+      <div class="hint">Tracks marked CC BY need a credit line. It is shown after the video is made - paste it in your video description.</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 8) ထုတ်လုပ်ရန် ============================================================ -->
+  <section class="box">
+    <h2>ဗီဒီယို ထုတ်လုပ်ရန်</h2>
+    <p class="box-desc">အပေါ်က ဆက်တင်များ ပြည့်စုံပြီဆိုလျှင် အောက်က ခလုတ်ကို နှိပ်ပါ။</p>
+    <label class="toggle" style="margin-bottom:10px">
+      <span class="t"><b>Title / Caption / Hashtag ပါ ရေးပေးမည်</b><small>ဗီဒီယိုကို Facebook / TikTok / YouTube တင်ရန် ခေါင်းစဉ်၊ ရေးသားချက်၊ # များကို Gemini က ရေးပေးမည်</small></span>
+      <input type="checkbox" id="postOn" checked><span class="switch"></span>
+    </label>
+    <button class="go" id="genBtn" type="button">ဗီဒီယို ထုတ်မည် 🎞</button>
+
+    <div id="progressBox"></div>
+    <div id="errBox"></div>
+
+    <div id="resultBox" class="hidden">
+      <div id="resWarn"></div>
+      <video id="resVideo" class="result" controls playsinline></video>
+      <div>
+        <a class="dl" id="dlMp4" download>⬇ MP4 ဒေါင်းလုဒ်</a>
+        <a class="dl alt" id="dlMp3" download>⬇ MP3 ဒေါင်းလုဒ်</a>
+      </div>
+      <div style="margin-top:10px">
+        <a class="srt" id="dlSrt" download>စာတန်းဖိုင် (SRT)</a>
+        <a class="srt hidden" id="dlTranscript" download>မူရင်းစကား စာသား (SRT)</a>
+      </div>
+      <div id="posterBox" class="hidden" style="margin-top:16px">
+        <a class="dl alt" id="dlPoster" download>⬇ Poster (jpg) ဒေါင်းလုဒ်</a>
+      </div>
+      <div id="postBox" class="hidden" style="margin-top:16px">
+        <label class="lbl">Title (ခေါင်းစဉ်)</label>
+        <div class="copyrow"><input type="text" id="postTitle" readonly><button type="button" class="btn-sm" data-copy="postTitle">ကူးယူ</button></div>
+        <label class="lbl">Caption (ရေးသားချက်)</label>
+        <div class="copyrow"><textarea id="postCaption" readonly style="min-height:96px"></textarea><button type="button" class="btn-sm" data-copy="postCaption">ကူးယူ</button></div>
+        <label class="lbl">Hashtags (#)</label>
+        <div class="copyrow"><textarea id="postTags" readonly style="min-height:64px"></textarea><button type="button" class="btn-sm" data-copy="postTags">ကူးယူ</button></div>
+        <button type="button" class="btn-sm" id="copyAll">အားလုံး တစ်ခါတည်း ကူးယူ</button>
+        <a class="srt hidden" id="dlPost" download>စာသားဖိုင် (.txt)</a>
+      </div>
+      <details><summary>စာတန်းအချိန်ဇယား ကြည့်ရန်</summary><div id="capsList"></div></details>
+    </div>
+  </section>
+  </div><!-- /view-create -->
+
+  <!-- ====================== ကျွန်ုပ်၏ ဗီဒီယိုများ ====================== -->
+  <div class="view hidden" id="view-videos">
+    <h1>📁 ကျွန်ုပ်၏ ဗီဒီယိုများ</h1>
+    <p class="sub" id="videosNote">ထုတ်ထားသော ဗီဒီယိုများကို ဒီမှာ ပြန်ကြည့်၊ ဒေါင်းလုဒ်လုပ်နိုင်သည်။</p>
+    <div id="videosList"><div class="empty">ဗီဒီယိုစာရင်း ရယူနေသည်...</div></div>
+  </div>
+
+  <!-- ====================== Profile ====================== -->
+  <div class="view hidden" id="view-profile">
+    <h1>👤 Profile</h1>
+    <p class="sub">သင့်အကောင့် အချက်အလက်</p>
+    <section class="box">
+      <h2>အကောင့်</h2>
+      <div class="kv">
+        <span>Email</span><span id="pfEmail"></span>
+        <span>အမည်</span><span><input type="text" id="pfName" maxlength="60" placeholder="သင့်အမည်"></span>
+        <span>ဖွင့်ထားသည့်နေ့</span><span id="pfCreated"></span>
+        <span>ဗီဒီယိုများ</span><span id="pfUsage"></span>
+      </div>
+      <button type="button" class="btn-sm" id="pfSave">💾 အမည် သိမ်းမည်</button>
+      <div id="pfMsg"></div>
+    </section>
+  </div>
+
+  <!-- ====================== Settings ====================== -->
+  <div class="view hidden" id="view-settings">
+    <h1>⚙ Settings</h1>
+    <p class="sub">လုံခြုံရေးနှင့် အကောင့် စီမံခန့်ခွဲမှု</p>
+    <section class="box">
+      <h2>Password ပြောင်းရန်</h2>
+      <div class="formrow"><label class="lbl">လက်ရှိ Password</label><input type="password" id="pwCur" autocomplete="current-password"></div>
+      <div class="formrow"><label class="lbl">Password အသစ် (အနည်းဆုံး ၈ လုံး)</label><input type="password" id="pwNew" autocomplete="new-password"></div>
+      <div class="formrow"><label class="lbl">Password အသစ် ထပ်ရိုက်ပါ</label><input type="password" id="pwNew2" autocomplete="new-password"></div>
+      <button type="button" class="btn-sm" id="pwSave">🔒 Password ပြောင်းမည်</button>
+      <div class="hint">ပြောင်းလိုက်လျှင် တခြားစက်များမှ Login ထွက်သွားမည်။</div>
+      <div id="pwMsg"></div>
+    </section>
+    <section class="box">
+      <h2>ဖိုင်များ သိမ်းဆည်းခြင်း</h2>
+      <p class="box-desc" id="retentionNote">ထုတ်ထားသော ဗီဒီယိုများကို ၄၈ နာရီပြည့်လျှင် အလိုအလျောက် ဖျက်ပါသည်။ ဖျက်မခံရခင် ဒေါင်းလုဒ်လုပ်ထားပါ။</p>
+    </section>
+    <section class="box">
+      <h2>အကောင့် ဖျက်ရန်</h2>
+      <p class="box-desc">အကောင့်နှင့် ဗီဒီယိုများအားလုံး အပြီးအပိုင် ပျက်သွားမည်။ ပြန်မရနိုင်ပါ။</p>
+      <div class="formrow"><label class="lbl">အတည်ပြုရန် Password ရိုက်ပါ</label><input type="password" id="delPw" autocomplete="current-password"></div>
+      <button type="button" class="btn-sm danger" id="delAcc">🗑 အကောင့်ဖျက်မည်</button>
+      <div id="delMsg"></div>
+    </section>
+  </div>
+</div><!-- /wrap -->
+</main>
+</div><!-- /layout -->
+
+<script src="/static/js/utils.js"></script>
+<script src="/static/js/source-voice.js"></script>
+<script src="/static/js/style-edit.js"></script>
+<script src="/static/js/preview.js"></script>
+<script src="/static/js/music.js"></script>
+<script src="/static/js/generate.js"></script>
+<script src="/static/js/shell.js"></script>
+</body>
+</html>
